@@ -1020,7 +1020,12 @@
     "@types/jsonwebtoken" "9.0.10"
     jsonwebtoken "9.0.2"
 
-"@nestjs/platform-express@^11.0.1":
+"@nestjs/mongoose@^11.0.3":
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/mongoose/-/mongoose-11.0.3.tgz#8278f0c5b76a7a0b7ac780f0c85341e5ce69eb9c"
+  integrity sha512-tg7bbKD4MnNMPaiDLXK/JUyTNQxIn3rNnI+oYU1HorLpNiR2E8vPraWVvfptpIj+zferpT6LkrHMvtqvuIKNPw==
+
+"@nestjs/platform-express@^11.1.8":
   version "11.1.8"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.1.8.tgz#9e97c20d23df70ad8826125424a69c9103b68653"
   integrity sha512-rL6pZH9BW7BnL5X2eWbJMtt86uloAKjFgyY5+L2UkizgfEp7rgAs0+Z1z0BcW2Pgu5+q8O7RKPNyHJ/9ZNz/ZQ==
