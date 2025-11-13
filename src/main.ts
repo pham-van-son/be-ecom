@@ -5,9 +5,20 @@ import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { join } from 'path';
 import * as express from 'express';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  try {
+    const dataSource = app.get(DataSource);
+    if (dataSource.isInitialized) {
+      await dataSource.runMigrations();
+      console.log('Migrations ran successfully!');
+    }
+  } catch (error) {
+    console.error('Migration failed:', error.message);
+  }
 
   app.enableCors({ origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', credentials: true });
 

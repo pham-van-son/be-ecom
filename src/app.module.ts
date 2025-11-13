@@ -3,9 +3,10 @@ import * as dotenv from 'dotenv';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './common/config/typeorm.config';
 
 dotenv.config();
 
@@ -17,7 +18,13 @@ dotenv.config();
     MulterModule.register({
       dest: './public/uploads',
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecom'),
+    TypeOrmModule.forRootAsync({
+      imports: [
+        ConfigModule
+      ],
+      useFactory: typeOrmConfig,
+      inject: [ConfigService],
+    })
   ],
   controllers: [AppController],
   providers: [AppService],
