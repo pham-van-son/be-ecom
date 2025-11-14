@@ -1,22 +1,21 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class BaseEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ type: 'timestamp' })
-    createdAt: Date;
-    
+  @Column({ type: 'timestamp' })
+  createdAt: Date;
 
-    @Column({ type: 'timestamp' })
-    updatedAt: Date;
+  @Column({ type: 'timestamp' })
+  updatedAt: Date;
 
-    @Column({ default: false })
-    isDeleted: boolean;
+  @Column({ default: false })
+  isDeleted: boolean;
 
-    @Column({ type: 'timestamp' })
-    deletedAt: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  deletedAt?: Date;
 
-    @Column({ default: 'active' })
-    status: string;
+  @Column({ default: 'active' })
+  status: string;
 }
