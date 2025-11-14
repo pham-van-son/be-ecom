@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './common/config/typeorm.config';
+import { typeOrmCliConfig } from './common/config/typeorm-cli.config';
 
 dotenv.config();
 
@@ -19,12 +20,11 @@ dotenv.config();
       dest: './public/uploads',
     }),
     TypeOrmModule.forRootAsync({
-      imports: [
-        ConfigModule
-      ],
-      useFactory: typeOrmConfig,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        typeOrmCliConfig(configService),
       inject: [ConfigService],
-    })
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

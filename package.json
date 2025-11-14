@@ -8,21 +8,17 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    
     "start": "yarn migrate:run && nest start",
     "start:dev": "yarn migrate:run && nest start --watch",
     "start:debug": "yarn migrate:run && nest start --debug --watch",
     "start:prod": "yarn build && yarn migrate:run && node dist/main",
-    
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-
     "migrate:create": "typeorm migration:create src/migrations",
-    "migrate:gen": "typeorm migration:generate src/migrations/$(date +%s)-Auto -d src/config/typeorm.config.ts",
-    "migrate:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
-    "migrate:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
-    
+    "migrate:gen": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/migrations/$(date +%s)-Auto -d src/common/config/typeorm-cli.config.ts",
+    "migrate:run": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/common/config/typeorm-cli.config.ts",
+    "migrate:revert": "npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d src/common/config/typeorm.config.ts",
     "schema:gen": "yarn migrate:gen && yarn migrate:run",
     "db:nuke": "rm -rf src/migrations/* && yarn schema:gen",
     "db:reset": "yarn migrate:revert -- -n 999 && yarn schema:gen"

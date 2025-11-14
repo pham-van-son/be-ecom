@@ -20,21 +20,30 @@ async function bootstrap() {
     console.error('Migration failed:', error.message);
   }
 
-  app.enableCors({ origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', credentials: true });
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   app.setGlobalPrefix('api/v1');
 
   app.use(bodyParser.json({ limit: '1000mb' }));
-  app.use((bodyParser.urlencoded({ limit: '1000mb', extended: true })));
+  app.use(bodyParser.urlencoded({ limit: '1000mb', extended: true }));
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.use('/uploads', express.static(join(__dirname, '..', 'public', 'uploads')));
+  app.use(
+    '/uploads',
+    express.static(join(__dirname, '..', 'public', 'uploads')),
+  );
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   await app.listen(process.env.PORT || 3000);
 }
