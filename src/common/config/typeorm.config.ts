@@ -9,10 +9,11 @@ const ormConfig: TypeOrmModuleOptions = {
   password: process.env.POSTGRES_PASSWORD || 'ecom_password_hongson',
   database: process.env.POSTGRES_DB || 'ecom_db',
 
-  entities: [join(__dirname, '../**/**/*.entity.{ts,js}')],
+  entities: [join(__dirname, '../schema/*.entity.{ts,js}')],
+  autoLoadEntities: true,
 
   synchronize: false,
-  migrationsRun: true,
+  migrationsRun: false,
   migrations: [join(__dirname, '../migrations/*.{ts,js}')],
 
   logging: true,
