@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from 'rxjs';
 import { CommuneResponseDto, ProvinceResponseDto } from '../response';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { removeVietnameseTones } from '../removeVietnameseTones';
 
 @Injectable()
@@ -12,8 +11,6 @@ export class LocationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-
-    @Inject(CACHE_MANAGER) private readonly cacheManager: any,
   ) {}
 
   private get baseUrl(): any {
@@ -21,10 +18,6 @@ export class LocationService {
   }
 
   async getProvinces(): Promise<ProvinceResponseDto> {
-    const cacheKey = 'provinces';
-    const cached = await this.cacheManager.get(cacheKey);
-    if (cached) return cached;
-
     const { data } = await firstValueFrom(
       this.httpService.get(`${this.baseUrl}/provinces`),
     );
@@ -37,10 +30,6 @@ export class LocationService {
   }
 
   async getCommunes(): Promise<CommuneResponseDto> {
-    const cacheKey = 'communes';
-    const cached = await this.cacheManager.get(cacheKey);
-    if (cached) return cached;
-
     const { data } = await firstValueFrom(
       this.httpService.get(`${this.baseUrl}/communes`),
     );
@@ -60,15 +49,10 @@ export class LocationService {
       return c;
     });
 
-    await this.cacheManager.set(cacheKey, result, { ttl: 3600 });
     return result;
   }
 
   async getCommunesByProvince(code: string): Promise<CommuneResponseDto> {
-    const cacheKey = `communes_${code}`;
-    const cached = await this.cacheManager.get(cacheKey);
-    if (cached) return cached;
-
     const { data } = await firstValueFrom(
       this.httpService.get(`${this.baseUrl}/provinces/${code}/communes`),
     );
@@ -88,7 +72,6 @@ export class LocationService {
       return c;
     });
 
-    await this.cacheManager.set(cacheKey, result, { ttl: 3600 });
     return result;
   }
 }

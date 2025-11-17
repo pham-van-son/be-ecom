@@ -1,69 +1,76 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ProvinceDto {
-  @ApiProperty({ example: '01', description: 'Mã code của tỉnh/thành phố' })
+  @ApiProperty({ example: '01' })
+  @Expose()
   code: string;
 
-  @ApiProperty({
-    example: 'Hà Nội',
-    description: 'Tên tiếng Việt của tỉnh/thành phố',
-  })
+  @ApiProperty({ example: 'Hà Nội' })
+  @Expose()
   name: string;
 
-  @ApiProperty({
-    example: 'Ha Noi',
-    description: 'Tên tiếng Anh của tỉnh/thành phố',
-  })
+  @ApiProperty({ example: 'Ha Noi' })
+  @Expose()
   englishName: string;
 
-  @ApiProperty({
-    example: 'Thành phố trực thuộc Trung ương',
-    description: 'Cấp hành chính',
-  })
+  @ApiProperty({ example: 'Thành phố trực thuộc Trung ương' })
+  @Expose()
   administrativeLevel: string;
 
-  @ApiProperty({
-    example: '24/NQ-TW',
-    description: 'Văn bản quyết định thành lập',
-  })
+  @ApiProperty({ example: '24/NQ-TW' })
+  @Expose()
   decree: string;
 }
 
+export class ProvinceResponseDto {
+  @ApiProperty()
+  @Expose()
+  requestId: string;
+
+  @ApiProperty({ type: ProvinceDto, isArray: true })
+  @Expose()
+  @Type(() => ProvinceDto)
+  provinces: ProvinceDto[];
+}
+
 export class CommuneDto {
-  @ApiProperty({ example: '00001', description: 'Mã code của xã/phường' })
+  @ApiProperty({ example: '00001' })
+  @Expose()
   code: string;
 
-  @ApiProperty({
-    example: 'Phúc Xá',
-    description: 'Tên tiếng Việt của xã/phường',
-  })
+  @ApiProperty({ example: 'Phúc Xá' })
+  @Expose()
   name: string;
 
-  @ApiProperty({
-    example: 'Phuc Xa',
-    description: 'Tên tiếng Anh của xã/phường',
-  })
+  @ApiProperty({ example: 'Phuc Xa' })
+  @Expose()
   englishName: string;
 
-  @ApiProperty({ example: 'Phường', description: 'Cấp hành chính' })
+  @ApiProperty({ example: 'Phường' })
+  @Expose()
   administrativeLevel: string;
 
-  @ApiProperty({
-    example: '01',
-    description: 'Mã code của tỉnh/thành phố trực thuộc',
-  })
+  @ApiProperty({ example: '01' })
+  @Expose()
   provinceCode: string;
 
-  @ApiProperty({
-    example: 'Thành phố Hà Nội',
-    description: 'Tên tỉnh/thành phố trực thuộc',
-  })
+  @ApiProperty({ example: 'Thành phố Hà Nội' })
+  @Expose()
   provinceName: string;
 
-  @ApiProperty({
-    example: '24/NQ-TW',
-    description: 'Văn bản quyết định thành lập',
-  })
+  @ApiProperty({ example: '24/NQ-TW' })
+  @Expose()
   decree: string;
+}
+
+export class CommuneResponseDto {
+  @ApiProperty()
+  @Expose()
+  requestId: string;
+
+  @ApiProperty({ type: CommuneDto, isArray: true })
+  @Expose()
+  @Type(() => CommuneDto)
+  communes: CommuneDto[];
 }
