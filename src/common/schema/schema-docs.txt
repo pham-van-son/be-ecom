@@ -1,0 +1,282 @@
+1. BaseSchema
+- Mục đích: Làm lớp nền cho các collection khác, cung cấp các trường dùng chung để quản lý trạng thái bản ghi.
+- Các trường:
+  - createdAt (Date, mặc định thời điểm hiện tại): Thời điểm bản ghi được tạo.
+  - updatedAt (Date, mặc định thời điểm hiện tại): Thời điểm bản ghi được cập nhật lần cuối.
+  - isDeleted (boolean, mặc định false): Đánh dấu xóa mềm (soft delete).
+  - deletedAt (Date, mặc định null): Thời điểm bản ghi bị xóa mềm.
+  - status (string, mặc định 'active'): Trạng thái hiện tại của bản ghi (active, inactive, v.v.).
+
+2. Address
+- Mục đích: Lưu địa chỉ giao hàng / nhận hàng của khách (customer).
+- Các trường:
+  - customer_profile_id (ObjectId -> CustomerProfile): Khóa ngoại tới hồ sơ khách hàng.
+  - street (string): Địa chỉ chi tiết (số nhà, tên đường...).
+  - city (string): Thành phố.
+  - province (string): Tỉnh / thành.
+  - country (string, mặc định 'Vietnam'): Quốc gia.
+  - zip_code (string): Mã bưu chính (nếu có).
+  - is_default (boolean, mặc định false): Có phải địa chỉ mặc định hay không.
+  - recipient_name (string): Tên người nhận hàng (có thể khác chủ tài khoản).
+  - phone (string): Số điện thoại liên hệ giao hàng.
+  - isDeleted, deletedAt, status: Trường quản lý xóa mềm và trạng thái.
+
+3. AuditLog
+- Mục đích: Lưu log audit cho các thao tác quan trọng (thay đổi dữ liệu…).
+- Các trường:
+  - user_id (ObjectId -> User): Người thực hiện hành động.
+  - action (string): Tên hành động (create_order, update_inventory, v.v.).
+  - entity_id (number): ID thực thể bị tác động (tùy hệ thống quy ước).
+  - old_value (object): Dữ liệu cũ trước khi thay đổi.
+  - new_value (object): Dữ liệu mới sau khi thay đổi.
+  - isDeleted, deletedAt, status: Quản lý xóa mềm và trạng thái log.
+
+4. Cart
+- Mục đích: Giỏ hàng của khách (có tài khoản hoặc khách vãng lai).
+- Các trường:
+  - customer_account_id (ObjectId -> CustomerAccount): Tham chiếu tài khoản khách, null nếu là guest.
+  - guest_token (string): Token để nhận diện giỏ hàng của khách vãng lai.
+  - total_amount (number): Tổng tiền hiện tại của giỏ hàng.
+  - total_items (number): Tổng số lượng sản phẩm trong giỏ.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái giỏ.
+
+5. CartItem
+- Mục đích: Chi tiết từng sản phẩm trong giỏ hàng.
+- Các trường:
+  - cart_id (ObjectId -> Cart): Thuộc về giỏ hàng nào.
+  - variant_id (ObjectId -> ProductVariant): Biến thể sản phẩm (size, màu…).
+  - quantity (number): Số lượng mua.
+  - price_at_add (number): Đơn giá tại thời điểm thêm vào giỏ.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+6. Category
+- Mục đích: Danh mục sản phẩm (có phân cấp).
+- Các trường:
+  - name (string): Tên danh mục.
+  - slug (string, unique): Slug dùng cho URL / SEO.
+  - parent_id (ObjectId -> Category): Danh mục cha (nếu là danh mục con).
+  - description (string): Mô tả danh mục.
+  - image_url (string): Ảnh đại diện danh mục.
+  - level (number): Mức độ trong cây phân cấp (0 = root).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+7. CustomerAccount
+- Mục đích: Tài khoản đăng nhập của khách (email, mật khẩu, điểm, voucher).
+- Các trường:
+  - email (string, unique): Email đăng nhập.
+  - password (string): Mật khẩu (đã hash).
+  - points (number): Điểm tích lũy hiện tại.
+  - voucher_codes (string[]): Danh sách mã voucher mà khách đang sở hữu (nếu dùng dạng code thô).
+  - is_verified (boolean): Email đã xác thực hay chưa.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+8. CustomerPointTransaction
+- Mục đích: Lịch sử biến động điểm của khách hàng.
+- Các trường:
+  - customer_account_id (ObjectId -> CustomerAccount): Khách hàng liên quan.
+  - points_change (number): Số điểm thay đổi (+ hoặc -).
+  - reason (string): Lý do (mua hàng, hoàn điểm, dùng điểm…).
+  - order_id (ObjectId -> Order): Đơn hàng liên quan (nếu có).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+9. CustomerProfile
+- Mục đích: Thông tin hồ sơ cá nhân của khách (khác với tài khoản login).
+- Các trường:
+  - customer_account_id (ObjectId -> CustomerAccount): Gắn với tài khoản nào.
+  - full_name (string): Họ tên khách.
+  - phone (string): Số điện thoại chính.
+  - birthday (Date): Ngày sinh.
+  - gender (string: male/female/other): Giới tính.
+  - default_address_id (ObjectId -> Address): Địa chỉ mặc định.
+  - preferences (object): Sở thích, cài đặt riêng (size ưa dùng, màu yêu thích…).
+  - avatar (string): URL avatar.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+10. CustomerVoucher
+- Mục đích: Voucher gắn với từng khách hàng cụ thể.
+- Các trường:
+  - customer_account_id (ObjectId -> CustomerAccount): Chủ sở hữu voucher.
+  - code (string, unique): Mã voucher.
+  - discount_type (string: percent/fixed): Loại giảm (phần trăm / số tiền cố định).
+  - discount_value (number): Giá trị giảm tương ứng.
+  - expires_at (Date): Ngày hết hạn.
+  - used_at (Date): Thời điểm đã sử dụng (nếu có).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+11. InventoryLog
+- Mục đích: Log điều chỉnh tồn kho cho từng biến thể sản phẩm và từng cửa hàng.
+- Các trường:
+  - variant_id (ObjectId -> ProductVariant): Biến thể sản phẩm được điều chỉnh tồn.
+  - store_id (ObjectId -> Store): Cửa hàng liên quan (nếu quản lý theo từng store).
+  - quantity_change (number): Số lượng tăng/giảm (có thể âm).
+  - reason (string): Lý do điều chỉnh (nhập hàng, xuất hàng, trả hàng, kiểm kho…).
+  - user_id (ObjectId -> User): Nhân viên thực hiện.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+12. NewsCategory
+- Mục đích: Danh mục tin tức (có phân cấp).
+- Các trường:
+  - name (string): Tên danh mục tin.
+  - slug (string, unique): Slug cho URL.
+  - parent_id (ObjectId -> NewsCategory): Danh mục cha.
+  - description (string): Mô tả.
+  - image_url (string): Ảnh đại diện.
+  - level (number): Mức độ trong cây phân cấp.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+13. News
+- Mục đích: Bài viết tin tức, blog, lookbook, thông báo khuyến mại…
+- Các trường:
+  - title (string): Tiêu đề bài viết.
+  - content (string): Nội dung chi tiết (HTML/Plain text).
+  - category_id (ObjectId -> NewsCategory): Danh mục của bài viết.
+  - author_user_id (ObjectId -> User): User admin/biên tập viên tạo bài.
+  - images (object): Danh sách ảnh liên quan.
+  - publish_date (Date): Ngày xuất bản.
+  - is_published (boolean): Đã publish hay chưa.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+14. Order
+- Mục đích: Đơn hàng của khách (mua cho bản thân hoặc tặng quà).
+- Các trường:
+  - customer_account_id (ObjectId -> CustomerAccount): Khách đặt hàng (có thể null với guest).
+  - total_amount (number): Tổng tiền đã tính sau giảm giá.
+  - discount_applied (number): Tổng số tiền/giá trị giảm áp dụng.
+  - is_gift (boolean): Đơn này là mua tặng hay không.
+  - gift_message (string): Lời nhắn gửi kèm (nếu là quà).
+  - gift_recipient_info (object): Thông tin người nhận quà (tên, điện thoại, địa chỉ… nếu không dùng Address).
+  - shipping_address_id (ObjectId -> Address): Địa chỉ giao hàng.
+  - payment_method (string): Phương thức thanh toán (cod, online…).
+  - payment_status (string: paid/pending): Trạng thái thanh toán.
+  - store_id (ObjectId -> Store): Cửa hàng xử lý đơn (nếu giao từ store cụ thể).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+15. OrderItem
+- Mục đích: Chi tiết từng dòng sản phẩm trong đơn hàng.
+- Các trường:
+  - order_id (ObjectId -> Order): Đơn hàng liên quan.
+  - variant_id (ObjectId -> ProductVariant): Biến thể sản phẩm được mua.
+  - quantity (number): Số lượng mua.
+  - price_at_purchase (number): Đơn giá tại thời điểm mua (đã bao gồm discount đơn vị nếu có).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+16. OrderLog
+- Mục đích: Lịch sử thay đổi trạng thái đơn hàng.
+- Các trường:
+  - order_id (ObjectId -> Order): Đơn hàng liên quan.
+  - status_from (string): Trạng thái cũ (vd: pending).
+  - status_to (string): Trạng thái mới (vd: confirmed, shipped).
+  - note (string): Ghi chú thêm (lý do thay đổi, ghi chú nội bộ…).
+  - user_id (ObjectId -> User): Nhân viên thực hiện thay đổi.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+17. Product
+- Mục đích: Sản phẩm gốc (không bao gồm size/màu, những cái đó ở ProductVariant).
+- Các trường:
+  - name (string): Tên sản phẩm.
+  - description (string): Mô tả chi tiết.
+  - category_id (ObjectId -> Category): Danh mục chính.
+  - base_price (number): Giá cơ bản (trước khi cộng thêm phụ thu của variant).
+  - sku (string, unique): Mã SKU chung (có thể dùng cho sản phẩm cha).
+  - images (object): Danh sách ảnh sản phẩm.
+  - is_active (boolean): Sản phẩm có đang được bán hay không.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+18. ProductAttribute
+- Mục đích: Các thuộc tính bổ sung của sản phẩm (chất liệu, form, kiểu cổ…).
+- Các trường:
+  - product_id (ObjectId -> Product): Sản phẩm liên quan.
+  - name (string): Tên thuộc tính (ví dụ: material, style).
+  - value (string): Giá trị thuộc tính (ví dụ: cotton 100%, oversize).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+19. ProductVariant
+- Mục đích: Biến thể cụ thể của sản phẩm (size, màu...).
+- Các trường:
+  - product_id (ObjectId -> Product): Sản phẩm cha.
+  - size (string): Size (S, M, L, XL…).
+  - color (string): Màu sắc (red, black…).
+  - additional_price (number): Phụ thu thêm so với base_price (nếu có).
+  - stock_quantity (number): Tồn kho tổng (nếu không chi tiết theo từng store) hoặc tồn kho mặc định.
+  - sku (string, unique): SKU riêng của variant.
+  - images (object): Ảnh riêng cho biến thể (nếu muốn).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+20. Promotion
+- Mục đích: Chương trình khuyến mại (sale, flash sale, bundle).
+- Các trường:
+  - name (string): Tên chương trình.
+  - type (string: sale/flash_sale/bundle): Loại khuyến mại.
+  - discount_type (string: percent/fixed): Loại giảm giá.
+  - discount_value (number): Giá trị giảm.
+  - min_order_value (number): Giá trị đơn tối thiểu để áp dụng (nếu có).
+  - start_date (Date): Thời gian bắt đầu.
+  - end_date (Date): Thời gian kết thúc.
+  - applicable_stores (ObjectId[]): Danh sách store áp dụng.
+  - is_active (boolean): Đang bật hay tắt chương trình.
+  - products (ObjectId[] -> Product): Danh sách sản phẩm áp dụng.
+  - categories (ObjectId[] -> Category): Danh sách danh mục áp dụng.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+21. Role
+- Mục đích: Vai trò (role) cho tài khoản admin/nhân viên.
+- Các trường:
+  - name (string, unique): Tên role (admin, store_manager, staff…).
+  - description (string): Mô tả vai trò.
+  - permissions (object): Tập quyền chi tiết (vd: {canManageOrders: true}).
+  - parent_role_id (ObjectId -> Role): Role cha để kế thừa quyền (nếu có).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+22. Store
+- Mục đích: Cửa hàng trong hệ thống chuỗi store.
+- Các trường:
+  - name (string): Tên cửa hàng.
+  - address (string): Địa chỉ.
+  - phone (string): Số điện thoại cửa hàng.
+  - manager_user_id (ObjectId -> User): User quản lý chính của store.
+  - is_active (boolean): Cửa hàng đang hoạt động hay đã đóng.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+23. StoreInventory
+- Mục đích: Quản lý tồn kho theo từng cửa hàng và từng biến thể sản phẩm.
+- Các trường:
+  - store_id (ObjectId -> Store): Cửa hàng.
+  - variant_id (ObjectId -> ProductVariant): Biến thể sản phẩm.
+  - quantity (number): Số lượng tồn tại store đó.
+  - last_updated (Date): Thời điểm cập nhật tồn kho gần nhất.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+24. User
+- Mục đích: Tài khoản hệ thống cho admin/nhân viên.
+- Các trường:
+  - username (string, unique): Tên đăng nhập.
+  - password (string, unique - cần xem lại, thực tế không cần unique): Mật khẩu (hash).
+  - fullName (string): Họ tên nhân viên.
+  - role_id (ObjectId -> Role): Vai trò của user.
+  - store_id (ObjectId -> Store): Thuộc về cửa hàng nào (nếu là nhân viên store).
+  - allowed_ips (string[]): Danh sách IP được phép truy cập (tăng bảo mật).
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+25. UserSession
+- Mục đích: Session đăng nhập, token đang còn hiệu lực.
+- Các trường:
+  - user_id (ObjectId -> User): Người dùng tương ứng.
+  - token (string): Access token / refresh token.
+  - ip_address (string): IP khi đăng nhập.
+  - device_info (object): Thông tin thiết bị (browser, OS…).
+  - expires_at (Date): Thời điểm hết hạn session.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+26. Voucher
+- Mục đích: Mã voucher chung của hệ thống (trước khi gán cho từng khách).
+- Các trường:
+  - code (string, unique): Mã voucher.
+  - discount_type (string: percent/fixed): Loại giảm.
+  - discount_value (number): Giá trị giảm.
+  - min_order_value (number): Giá trị đơn tối thiểu để áp dụng.
+  - max_uses (number): Số lần sử dụng tối đa cho toàn hệ thống.
+  - uses_count (number): Số lần đã sử dụng.
+  - expires_at (Date): Ngày hết hạn.
+  - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
+
+
