@@ -3,15 +3,22 @@ import * as dotenv from 'dotenv';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { LocationModule } from './common/utils/location/location.module';
 import { UploadImagesModule } from './common/utils/upload-images/upload-images.module';
 import { UploadVideosModule } from './common/utils/upload-videos/upload-videos.module';
-import ormConfig from './common/config/typeorm.config';
+import { UserModule } from './modules/user/user.module';
+import { CustomerModule } from './modules/customer/customer.module';
 
 dotenv.config();
+
+const { DATABASE_URI } = process.env;
+
+if (!DATABASE_URI) {
+  throw new Error('DATABASE_URI is not defined');
+}
 
 @Module({
   imports: [
@@ -21,10 +28,13 @@ dotenv.config();
     MulterModule.register({
       dest: './public/uploads',
     }),
-    TypeOrmModule.forRoot(ormConfig),
+    MongooseModule.forRoot(DATABASE_URI),
+
     LocationModule,
     UploadImagesModule,
     UploadVideosModule,
+    UserModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
