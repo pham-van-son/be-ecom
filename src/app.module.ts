@@ -11,6 +11,7 @@ import { UploadImagesModule } from './common/utils/upload-images/upload-images.m
 import { UploadVideosModule } from './common/utils/upload-videos/upload-videos.module';
 import { UserModule } from './modules/user/user.module';
 import { CustomerModule } from './modules/customer/customer.module';
+import { RoleModule } from './modules/role/role.module';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ if (!DATABASE_URI) {
     UploadVideosModule,
     UserModule,
     CustomerModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

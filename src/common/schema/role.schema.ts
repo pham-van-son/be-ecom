@@ -6,6 +6,9 @@ export class Role extends Document {
   @Prop({ required: true, unique: true })
   name: string;
 
+  @Prop()
+  code: string;
+
   @Prop({ type: String, default: null })
   description?: string;
 
