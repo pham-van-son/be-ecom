@@ -12,7 +12,7 @@
 - Các trường:
   - customer_profile_id (ObjectId -> CustomerProfile): Khóa ngoại tới hồ sơ khách hàng.
   - street (string): Địa chỉ chi tiết (số nhà, tên đường...).
-  - city (string): Thành phố.
+  - ward (string): Phường/Xã.
   - province (string): Tỉnh / thành.
   - country (string, mặc định 'Vietnam'): Quốc gia.
   - zip_code (string): Mã bưu chính (nếu có).
@@ -222,8 +222,8 @@
 - Mục đích: Vai trò (role) cho tài khoản admin/nhân viên.
 - Các trường:
   - name (string, unique): Tên role (admin, store_manager, staff…).
+  - code (string, unique, default uuid): Mã hệ thống tự sinh.
   - description (string): Mô tả vai trò.
-  - permissions (object): Tập quyền chi tiết (vd: {canManageOrders: true}).
   - parent_role_id (ObjectId -> Role): Role cha để kế thừa quyền (nếu có).
   - isDeleted, deletedAt, status: Xóa mềm và trạng thái.
 

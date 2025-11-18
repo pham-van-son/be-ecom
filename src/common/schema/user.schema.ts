@@ -3,10 +3,10 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ collection: 'users', timestamps: true })
 export class User extends Document {
-  @Prop({ unique: true, sparse: true })
+  @Prop({ required: true, unique: true })
   username: string;
 
-  @Prop({ unique: true, sparse: true })
+  @Prop({ required: true })
   password: string;
 
   @Prop()
@@ -16,7 +16,7 @@ export class User extends Document {
   role_id: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Store', default: null })
-  store_id: Types.ObjectId;
+  store_id?: Types.ObjectId;
 
   @Prop({ type: [String], default: [] })
   allowed_ips: string[];
@@ -32,3 +32,5 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.index({ username: 1 });

@@ -6,6 +6,9 @@ export class Store extends Document {
   @Prop({ required: true, maxlength: 255 })
   name: string;
 
+  @Prop({ unique: true, required: true })
+  code: string;
+
   @Prop({ required: true, type: String })
   address: string;
 
