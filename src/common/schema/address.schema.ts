@@ -10,7 +10,7 @@ export class Address extends Document {
   street: string;
 
   @Prop({ required: true, maxlength: 100 })
-  city: string;
+  ward: string;
 
   @Prop({ required: true, maxlength: 100 })
   province: string;
