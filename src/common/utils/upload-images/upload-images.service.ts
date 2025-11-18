@@ -28,8 +28,11 @@ export class UploadImagesService {
     try {
       await fs.promises.writeFile(filePath, file.buffer);
       return `/uploads/images/${fileName}`;
-    } catch (error: any) {
-      throw new Error(`Lỗi khi lưu file: ${error?.message || 'Unknown error'}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Lỗi khi lưu file: ${error.message}`);
+      }
+      throw new Error('Lỗi khi lưu file: Unknown error');
     }
   }
 

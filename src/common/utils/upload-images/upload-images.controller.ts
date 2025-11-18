@@ -37,7 +37,7 @@ export class UploadImagesController {
       },
     }),
   )
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return {
         message: 'Không tìm thấy file',
@@ -70,7 +70,7 @@ export class UploadImagesController {
       },
     }),
   )
-  async uploadMultipleImages(@UploadedFiles() files: Express.Multer.File[]) {
+  uploadMultipleImages(@UploadedFiles() files: Express.Multer.File[]) {
     if (!files || files.length === 0) {
       return {
         message: 'Không tìm thấy file',
