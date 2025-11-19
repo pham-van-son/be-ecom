@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
@@ -27,22 +27,27 @@ export class AdminAuthGuard implements CanActivate {
       typeof authHeader !== 'string' ||
       !authHeader.startsWith('Bearer ')
     ) {
-      return false;
+      throw new UnauthorizedException('Token truyền vào không hợp lệ.');
     }
 
     const token = authHeader.split(' ')[1];
-
-    if (!token) return false;
+    if (!token) {
+      throw new UnauthorizedException('Token không được cung cấp.');
+    }
 
     try {
       const payload = this.jwtService.verify<AdminJwtPayload>(token, {
         secret: process.env.ADMIN_SECRET_KEY as string,
       });
 
+      if (payload.role_id !== 'admin') {
+        throw new UnauthorizedException('Bạn không có quyền truy cập.');
+      }
+
       request.admin = payload;
       return true;
     } catch {
-      return false;
+      throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn.');
     }
   }
 }

@@ -132,7 +132,7 @@ export class UserService {
 
     if (dto.store_id !== undefined) {
       if (dto.store_id === null) {
-        // Allow setting store_id to null
+
       } else {
         await this.ensureStoreExists(dto.store_id);
       }
@@ -253,7 +253,7 @@ export class UserService {
 
     const jwtOptions = {
       secret: process.env.ADMIN_SECRET_KEY as string,
-      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+      expiresIn: process.env.ADMIN_JWT_TIME || '7d',
     };
 
     const token = (
